@@ -1,0 +1,35 @@
+# Deploy after a successful Docker publish, or manually.
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   SSH_HOST          — VPS hostname or IP
+#   SSH_USER          — SSH login user
+#   SSH_PRIVATE_KEY   — full private key (-----BEGIN ... PRIVATE KEY-----)
+#   SSH_DEPLOY_PATH   — absolute directory on VPS with docker-compose.prod.yml and .env
+#
+# The VPS must already contain docker-compose.prod.yml, a .env with POSTSALE_AGENT_IMAGE, etc.
+
+name: Deploy VPS
+
+on:
+  workflow_run:
+    workflows: [Docker publish]
+    types: [completed]
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull and restart on VPS
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            cd ${{ secrets.SSH_DEPLOY_PATH }}
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
