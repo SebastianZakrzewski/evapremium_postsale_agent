@@ -1,0 +1,35 @@
+---
+description: LangChain / LangGraph / Deep Agents (JS) plus LangSmith—docs map and defaults
+globs: "**/*.{ts,tsx}"
+alwaysApply: true
+---
+
+# LangChain platform (official docs)
+
+- **Canonical entry**: [Docs by LangChain](https://docs.langchain.com/) — observability (LangSmith), evaluation, prompts, deployment, and open-source agent stacks.
+- **Full page index for agents / search**: [`https://docs.langchain.com/llms.txt`](https://docs.langchain.com/llms.txt) — use this before guessing URLs or behavior.
+- **JavaScript / TypeScript OSS docs root**: paths under [`/oss/javascript/`](https://docs.langchain.com/oss/javascript/concepts/products.md) (LangChain, LangGraph, Deep Agents, integrations).
+
+## Choose the right layer (TypeScript)
+
+Per [Frameworks, runtimes, and harnesses](https://docs.langchain.com/oss/javascript/concepts/products.md):
+
+| Layer | Product | Prefer when |
+| --- | --- | --- |
+| **Framework** | [LangChain (JS)](https://docs.langchain.com/oss/javascript/langchain/overview) | Quick agents, shared abstractions (models, tools, agent loop, middleware); LangChain sits on LangGraph—you do not have to expose graph details for simple agents. |
+| **Runtime** | [LangGraph (JS)](https://docs.langchain.com/oss/javascript/langgraph/overview) | Fine-grained orchestration, **durable execution**, streaming, persistence, human-in-the-loop at the graph level, production-oriented graphs. |
+| **Harness** | [Deep Agents (JS)](https://docs.langchain.com/oss/javascript/deepagents/overview) | Long-running, complex multi-step work: planning, subagents, filesystem-style context, predefined tooling—built on LangGraph. |
+
+- **Providers / models**: [Providers and models](https://docs.langchain.com/oss/javascript/concepts/providers-and-models.md) — one integration surface across vendors.
+- **Integrations**: [LangChain JS integrations hub](https://docs.langchain.com/oss/javascript/integrations/providers/overview.md); add or debug tools against specific provider pages listed there—not from memory alone.
+
+## LangSmith (commercial platform)
+
+- Use LangSmith docs under [`/langsmith/`](https://docs.langchain.com/langsmith/deployment.md) for **tracing**, **datasets**, **evaluators**, **deployment** (including Agent Server, threads/runs/streaming MCP, hybrid/self-hosted).
+- Typical concerns: instrumentation / custom spans ([annotate code](https://docs.langchain.com/langsmith/annotate-code.md)), metadata/tags, feedback, RBAC/auth, Agent Server scaling and checkpointer/store configuration.
+
+## Agent implementation habits
+
+- Prefer linking behavior to the **current** doc page rather than citing deprecated blog posts; APIs move—verify against `/oss/javascript/` or `/langsmith/` as needed.
+- For NestJS backends wrapping agents: keep thin HTTP layers and put orchestration in injectable services; wire LangSmith tracing via env (`LANGCHAIN_API_KEY`, `LANGCHAIN_TRACING_*` / LangSmith vars per [environment variables](https://docs.langchain.com/langsmith/env-var.md)) without hardcoding secrets.
+- When behavior is unclear, fetch or search **`llms.txt`** and open the closest matching markdown path rather than improvising signatures.

@@ -1,0 +1,34 @@
+---
+description: NestJS modules, layering, common/core, testing, and controller smoke endpoints
+globs: **/*.ts
+alwaysApply: true
+---
+
+# NestJS conventions
+
+## Architecture
+
+- Use a **modular** layout: encapsulate the API in feature modules.
+- **One primary module per main domain/route area**; **one controller** for its main HTTP route (add extra controllers only for clearly separate sub-routes).
+- Per feature module, organize roughly as:
+  - **`models/`** (or equivalent): input DTOs with **class-validator**; plain types/interfaces for responses.
+  - **`services/`** (or equivalent): business logic and persistence; **MikroORM entities** where applicable; aim for **one service per aggregate/entity** responsibility (adjust naming to match domain, not duplicated anemic services).
+
+## Common and core
+
+- **`@app/common` (or `common/` module)**: shared building blocks—config helpers, decorators, shared DTOs, guards, interceptors, notification helpers, cross-cutting services, shared types, utils, custom validators—**only truly reusable** code.
+- **`core/` (or CoreModule)**: app-wide wiring—**global exception filters**, **global middleware**, **global guards/interceptors** where appropriate—keep registration here, not duplicated in every feature module.
+
+## Testing
+
+- Use **Jest** for unit and integration tests.
+- Write tests for **each controller and each service** (happy path + important failures).
+- Add **end-to-end tests per API module** (or per bounded context), covering real HTTP paths and auth/middleware behavior as needed.
+
+## Controller smoke check
+
+- On **each HTTP controller**, expose a lightweight **smoke** endpoint (for example **`GET admin/test`** or a namespaced variant your app uses) that returns a simple OK payload so deployments and monitors can verify the module is wired. Keep it **read-only** and **safe** (no side effects, no secrets); protect it in production if required (guard, env flag, or network policy).
+
+## File naming
+
+- Align with project-wide rule: **kebab-case** for Nest file names (e.g. `user-profile.controller.ts`, `orders.service.ts`).

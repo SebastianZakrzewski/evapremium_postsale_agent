@@ -1,0 +1,47 @@
+---
+description: TypeScript style, naming, functions, data, classes, exceptions, and tests
+globs: "**/*.{ts,tsx}"
+alwaysApply: true
+---
+
+# TypeScript conventions
+
+## Language and types
+
+- Use English for code and documentation.
+- Declare explicit types for variables, parameters, and return values; avoid `any`; add dedicated types/interfaces as needed.
+- Add JSDoc on public classes and public methods.
+- **One export per file.**
+- Do not leave blank lines inside a function body.
+
+## Naming
+
+- **Classes**: PascalCase. **Variables, functions, methods**: camelCase. **Files and directories**: kebab-case.
+- **Environment variables**: UPPERCASE. Replace magic numbers with named constants.
+- **Functions/methods**: start with a verb. **Booleans**: `isLoading`, `hasError`, `canDelete`, etc.
+- Prefer full words; allowed abbreviations: API, URL, standard loop indices (`i`, `j`), `err`, `ctx`, and middleware params `req`, `res`, `next`.
+
+## Functions and methods
+
+- Keep them short and single-purpose (target: fewer than ~20 statements).
+- Name by intent: booleans → `isX` / `hasX` / `canX`; side effects → `executeX`, `saveX`, etc.
+- Prefer early returns and small helpers over deep nesting; use `map` / `filter` / `reduce` where they simplify control flow.
+- Use arrow functions only for very small bodies (about three statements or fewer); otherwise use named functions.
+- Prefer default parameter values over null/undefined checks when appropriate.
+- **RO-RO**: pass multiple inputs as one typed object; return structured objects for multiple outputs; define types for both.
+
+## Data and classes
+
+- Prefer composite types over long primitive parameter lists; favor immutability (`readonly`, `as const` where literals are fixed).
+- Prefer validating at boundaries (e.g. DTOs / value objects) rather than scattering ad-hoc checks across many functions.
+- Apply SOLID; favor composition over inheritance; keep classes small (few public methods/properties, cohesive responsibility).
+
+## Errors
+
+- Use exceptions for unexpected failures. In `catch`, only handle to fix an expected case, add context, or delegate to a global handler—avoid empty or generic catches.
+
+## Tests (Jest)
+
+- **Unit tests**: Arrange–Act–Assert; clear names for `inputX`, `mockX`, `actualX`, `expectedX`.
+- Cover each public function; use test doubles except when a real third-party dependency is cheap and stable.
+- **Acceptance tests**: per module, use Given–When–Then.
