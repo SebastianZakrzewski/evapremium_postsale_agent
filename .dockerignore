@@ -1,0 +1,17 @@
+node_modules
+dist
+coverage
+.git
+.github
+.cursor
+*.log
+.env
+.env.*
+!.env.example
+.npm
+*.tsbuildinfo
+README.md
+.editorconfig
+.prettierrc
+.vscode
+test
