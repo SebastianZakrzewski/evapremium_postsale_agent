@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { AgentController } from './agent.controller';
 
 /** Feature module for the postsale agent; register orchestration and HTTP entrypoints here. */
 @Module({
   imports: [],
-  controllers: [],
+  controllers: [AgentController],
   providers: [],
   exports: [],
 })
