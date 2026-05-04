@@ -1,0 +1,17 @@
+---
+description: Commits on develop, small atomic commits, clear messages
+alwaysApply: true
+---
+
+# Git commit conventions
+
+## Branch
+
+- **Land ongoing work on `develop`.** Current project changes (features, fixes, tests, config used in development) should be committed on the **`develop`** branch, not on `main`. Before committing, ensure the working branch is `develop` (`git checkout develop` or create it from the appropriate base if missing). Merge or promote to `main` only via your release/PR process, not as the default place for day-to-day commits.
+
+## Commits
+
+- **Prefer atomic commits.** One commit should represent a single coherent change (one feature slice, one bugfix, one test addition, or one refactor), not an unrelated bundle.
+- **When several independent changes exist in the working tree, create several commits.** Group files and hunks by purpose (for example: controller endpoint vs service implementation vs tests vs config) instead of squashing everything into one commit.
+- **Order commits logically** when dependencies exist (for example: types or service behavior before the HTTP layer that depends on it), or use small commits that each leave the repo in a consistent state.
+- Use **clear commit messages** (imperative subject line, optional body with context); keep each message scoped to that commit’s single change.
