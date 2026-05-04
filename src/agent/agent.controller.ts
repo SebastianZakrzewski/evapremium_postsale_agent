@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import type { SmokeTestResponse } from '../models/smoke-test.response';
 import { ChatRequestDto } from './models/chat-request.dto';
 import type { ChatResponse } from './models/chat-response';
@@ -8,6 +8,8 @@ import { AgentOrchestrationService } from './services/agent-orchestration.servic
 /** HTTP surface for the postsale agent; keep handlers thin and delegate to services. */
 @Controller('agent')
 export class AgentController {
+  private readonly logger = new Logger(AgentController.name);
+
   constructor(private readonly agentOrchestrationService: AgentOrchestrationService) {}
 
   @Get('test')
@@ -17,10 +19,18 @@ export class AgentController {
 
   @Post('chat')
   async runChat(@Body() dto: ChatRequestDto): Promise<ChatResponse> {
+    const sessionLabel = dto.sessionId ?? 'none';
+    this.logger.log(
+      `Chat request sessionId=${sessionLabel} messageLength=${dto.message.length}`,
+    );
     const input: RunAgentInput = {
       message: dto.message,
       sessionId: dto.sessionId,
     };
-    return this.agentOrchestrationService.runAgent(input);
+    const response = await this.agentOrchestrationService.runAgent(input);
+    this.logger.log(
+      `Chat response sessionId=${sessionLabel} replyLength=${response.reply.length}`,
+    );
+    return response;
   }
 }
