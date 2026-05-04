@@ -44,6 +44,29 @@ export class AgentOrchestrationService implements OnModuleInit {
    * Runs one agent turn for the given chat input; wire LangChain graph and tools here.
    */
   async runAgent(input: RunAgentInput): Promise<ChatResponse> {
-    throw new Error('AgentOrchestrationService.runAgent is not implemented yet.');
+    if (this.singletonAgent === undefined) {
+      throw new Error('AgentOrchestrationService.runAgent: agent not initialized');
+    }
+    const state = await this.singletonAgent.invoke({
+      messages: [{ role: 'user', content: input.message }],
+    });
+    const lastMessage = state.messages.at(-1);
+    const rawContent = lastMessage?.content;
+    const reply =
+      typeof rawContent === 'string'
+        ? rawContent
+        : Array.isArray(rawContent)
+          ? rawContent
+              .map((part: { type?: string; text?: string }) =>
+                part && typeof part === 'object' && part.type === 'text' && typeof part.text === 'string'
+                  ? part.text
+                  : '',
+              )
+              .join('')
+          : '';
+    return {
+      reply,
+      sessionId: input.sessionId,
+    };
   }
 }
